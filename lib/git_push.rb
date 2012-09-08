@@ -38,4 +38,13 @@
 
 
 
+class GitPush
+  def self.status
+    puts "Executing: git status\n"
+    status_output = `git status`
+    puts status_output
+  end
+  
 
+  
+end

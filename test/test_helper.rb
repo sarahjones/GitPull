@@ -4,5 +4,6 @@
 
 require 'test/unit'
 require 'mocha'
-require 'stubba'
-require File.dirname(__FILE__) + '/../lib/[project name]'
+#require 'stubba'
+require 'shoulda'
+require File.dirname(__FILE__) + '/../lib/git_push'

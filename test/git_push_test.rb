@@ -130,6 +130,22 @@ Date:   Sat Sep 8 17:35:42 2012 -0700
 M	lib/git_push.rb
 M	test/git_push_test.rb"
   
+  PUSH =
+    "Counting objects: 11, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (6/6), 3.21 KiB, done.
+Total 6 (delta 2), reused 0 (delta 0)
+To git@github.com:sarahjones/GitPush.git
+   f4bcd36..501ce5d  master -> master"
+  
+  PUSH_OUT_OF_DATE =
+    "To user@remote.net:/home/user/repos/remoterepo.git
+ ! [rejected]        master -> master (non-fast-forward)
+error: failed to push some refs to 'user@remote:/home/user/repos/remoterepo.git'
+To prevent you from losing history, non-fast-forward updates were rejected
+Merge the remote changes (e.g. 'git pull') before pushing again.  See the
+'Note about fast-forwards' section of 'git push --help' for details."
 
   context "when a GitPush is already in progress" do
     should "be detectable"
@@ -284,6 +300,24 @@ M	test/git_push_test.rb"
       GitPush.expects(:`).with("git reset #{/.*/}").never
       assert_equal false, GitPush.reset
       assert_equal "'GitPush Temporary Commit' not found.  Check git log or git reflog, maybe?\n", out
+    end
+  end
+  
+  context "push" do
+    should "display an error if could not push" do
+      out = ""
+      IO.any_instance.expects(:puts).with { |s|  out << "#{s}\n" }.at_least_once
+      GitPush.expects(:`).with("git push").returns(PUSH_OUT_OF_DATE).once
+      assert_equal false, GitPush.push
+      assert_equal "Executing: git push\n#{PUSH_OUT_OF_DATE}\nError: Unable to push.  Exiting...\n", out 
+    end
+    
+    should "show successful push" do
+      out = ""
+      IO.any_instance.expects(:puts).with { |s|  out << "#{s}\n" }.at_least_once
+      GitPush.expects(:`).with("git push").returns(PUSH).once
+      assert GitPush.push
+      assert_equal "Executing: git push\n#{PUSH}\nGitPush complete!\n", out
     end
   end
   

@@ -103,6 +103,21 @@ class GitPush
     true
   end
   
+  def self.push
+    puts "Executing: git push"
+    push_output = `git push`
+    puts push_output
+    success_regex = /[a-f0-9]{7}..[a-f0-9]{7}  \S+ -> \S+/
+    match = success_regex.match(push_output)
+    if match
+      puts "GitPush complete!"
+      return true
+    else
+      puts "Error: Unable to push.  Exiting..."
+      false
+    end
+  end
+  
   protected
   def self.find_reset_hash
     log_output = `git log`

@@ -3,17 +3,7 @@
 #lib = File.dirname(__FILE__)
 #
 #require lib + '/object.rb'
-#require lib + '/symbol.rb'
-#require lib + '/array.rb'
-#require lib + '/string.rb'
-#require lib + '/numeric.rb'
-#require lib + '/time.rb'
-#require lib + '/sql_statement.rb'
-#require lib + '/where_builder.rb'
-#require lib + '/select.rb'
-#require lib + '/insert.rb'
-#require lib + '/update.rb'
-#require lib + '/delete.rb'
+
 
 
 #git commit -a -m "Temporary work"
@@ -45,13 +35,13 @@ class GitPush
   end
   
   def self.status
-    puts "Executing: git status\n"
+    puts "Executing: git status"
     status_output = `git status`
     puts status_output
   end
   
   def self.add
-    puts "Executing: git add .\n"
+    puts "Executing: git add ."
     add_output = `git add .`
     puts add_output
     
@@ -66,7 +56,7 @@ class GitPush
   end
   
   def self.commit
-    puts "Executing: git commit -m \"GitPush Temporary Commit\"\n"
+    puts "Executing: git commit -m \"GitPush Temporary Commit\""
     commit_output = `git commit -m \"GitPush Temporary Commit\"`
     puts commit_output
     
@@ -80,6 +70,46 @@ class GitPush
       true
     end
   end
+  
+  def self.pull
+    puts "Executing: git pull"
+    pull_output = `git pull`
+    puts pull_output
 
+    status_output = `git status`
+    puts status_output
+    
+    if pull_output['Automatic merge failed; fix conflicts and then commit the result.']
+      puts "Error: Merge Conflicts\nYour 'GitPush Temporary Commit' is still committed.  Exiting..."
+      false
+    elsif status_output['# Changes to be committed:']
+      puts "Error: Unknown Error.  There are untracked files in your status.\nYour 'GitPush Temporary Commit' is still committed.  Exiting..."
+      false
+    else
+      true
+    end
+  end
+
+  def self.reset
+    hash = find_reset_hash
+    unless hash
+      puts "'GitPush Temporary Commit' not found.  Check git log or git reflog, maybe?"
+      return false
+    end
+    
+    puts "Executing: git reset #{hash}"
+    reset_output = `git reset #{hash}`
+    puts reset_output
+    true
+  end
+  
+  protected
+  def self.find_reset_hash
+    log_output = `git log`
+    
+    regex = /GitPush: Temporary Commit\s+commit ([a-f0-9]{40})\s+Author/
+    match = regex.match(log_output)
+    match[1] if match
+  end
   
 end

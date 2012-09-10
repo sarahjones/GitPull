@@ -153,18 +153,71 @@ Merge the remote changes (e.g. 'git pull') before pushing again.  See the
   end
   
   context "git_push" do
+    should "exit if reset returns false" do
+      IO.any_instance.expects(:puts)
+
+      GitPush.expects(:`).with("git add .").returns("").once
+      GitPush.expects(:`).with("git commit -m \"GitPush Temporary Commit\"").returns(COMMIT).once
+      GitPush.expects(:`).with("git pull").returns(PULL).once
+      GitPush.expects(:`).with("git log").returns(LOG).once
+      GitPush.expects(:`).with("git reset #{HASH}").returns(RESET).once
+
+      GitPush.expects(:`).with("git status").returns(STATUS_NORMAL).once.then.returns(STATUS_AFTER_COMMIT).once.then.returns(STATUS_AFTER_COMMIT).once
+      
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if pull returns false" do
+      GitPush.expects(:`).with("git add .").returns("").once
+      GitPush.expects(:`).with("git commit -m \"GitPush Temporary Commit\"").returns(COMMIT).once
+      GitPush.expects(:`).with("git pull").returns(PULL).once
+      GitPush.expects(:`).with("git status").returns(STATUS_NORMAL).once.then.returns(STATUS_AFTER_COMMIT).once.then.returns(STATUS_AFTER_COMMIT).once
+
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if commit returns false" do
+      GitPush.expects(:`).with("git add .").returns("").once
+      GitPush.expects(:`).with("git commit -m \"GitPush Temporary Commit\"").returns(COMMIT).once
+      GitPush.expects(:`).with("git status").returns(STATUS_NORMAL).once.then.returns(STATUS_AFTER_COMMIT).once
+
+      
+      GitPush.expects(:pull).never
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
     should "exit if add returns false" do
+      GitPush.expects(:`).with("git add .").returns("").once
+      GitPush.expects(:`).with("git status").returns(STATUS_NORMAL).once
+      
       GitPush.expects(:commit).never
       GitPush.expects(:pull).never
       GitPush.expects(:reset).never
       GitPush.expects(:push).never
-      assert false, "Not finished"
+      GitPush.git_push
     end
     
     should "execute status, commit, pull, reset, push" do
       GitPush.expects(:status).then.expects(:add).then.expects(:commit).then.expects(:pull).then.expects(:reset).then.expects(:push)
+      
+      
+#            IO.any_instance.expects(:puts)
+#
+#      GitPush.expects(:`).with("git add .").returns("").once
+#      GitPush.expects(:`).with("git commit -m \"GitPush Temporary Commit\"").returns(COMMIT).once
+#      GitPush.expects(:`).with("git pull").returns(PULL).once
+#      GitPush.expects(:`).with("git log").returns(LOG).once
+#      GitPush.expects(:`).with("git reset #{HASH}").returns(RESET).once
+#      GitPush.expects(:`).with("git push").returns(PUSH).once
+#
+#      GitPush.expects(:`).with("git status").returns(STATUS_NORMAL).once.then.returns(STATUS_AFTER_COMMIT).once.then.returns(STATUS_AFTER_COMMIT).once
+#      
       GitPush.git_push
-      assert false, "Not finished"
     end
   end
   

@@ -201,6 +201,8 @@ M	test/git_push_test.rb"
       GitPush.expects(:push).returns(true)
       GitPush.git_push
     end
+    
+    should "skip temporary commit if there is nothing to commit"
   end
   
   

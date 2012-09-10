@@ -109,7 +109,7 @@ class GitPush
     puts "Executing: git push"
     push_output = `git push`
     puts push_output
-    success_regex = /[a-f0-9]{7}..[a-f0-9]{7}  \S+ -> \S+/
+    success_regex = /[a-f0-9]{7}..[a-f0-9]{7}\s+\S+ -> \S+/
     match = success_regex.match(push_output)
     if match
       puts "GitPush complete!"

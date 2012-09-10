@@ -330,7 +330,6 @@ Merge the remote changes (e.g. 'git pull') before pushing again.  See the
     end
     
     should "find the first temporary commit message" do
-      puts LOG_WITH_MULTIPLE_TEMPORARY_COMMITS
       GitPush.expects(:`).with("git log").returns(LOG_WITH_MULTIPLE_TEMPORARY_COMMITS).once
       assert_equal HASH, GitPush.find_reset_hash
     end

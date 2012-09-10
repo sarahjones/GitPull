@@ -30,8 +30,10 @@
 
 class GitPush
   
+  COMMIT_MESSAGE = "GitPush Temporary Commit"
+  
   def self.git_push
-
+    add && commit && pull && reset && push
   end
   
   def self.status
@@ -56,7 +58,7 @@ class GitPush
   end
   
   def self.commit
-    puts "Executing: git commit -m \"GitPush Temporary Commit\""
+    puts "Executing: git commit -m \"#{COMMIT_MESSAGE}\""
     commit_output = `git commit -m \"GitPush Temporary Commit\"`
     puts commit_output
     
@@ -122,9 +124,14 @@ class GitPush
   def self.find_reset_hash
     log_output = `git log`
     
-    regex = /GitPush: Temporary Commit\s+commit ([a-f0-9]{40})\s+Author/
+    regex = /#{COMMIT_MESSAGE}\s+commit ([a-f0-9]{40})\s+Author/
     match = regex.match(log_output)
     match[1] if match
   end
   
+end
+
+
+if __FILE__==$0
+  GitPush.git_push
 end

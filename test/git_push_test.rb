@@ -120,7 +120,7 @@ Date:   Sat Sep 8 14:25:05 2012 -0700
 Author: My Name <my_name@gmail.com>
 Date:   Sat Sep 8 17:35:42 2012 -0700
 
-    GitPush: Temporary Commit
+    #{GitPush::COMMIT_MESSAGE}
 
 #{LOG_WITHOUT_TEMPORARY_COMMIT}"
   
@@ -153,18 +153,53 @@ Merge the remote changes (e.g. 'git pull') before pushing again.  See the
   end
   
   context "git_push" do
+    should "exit if reset returns false" do
+      GitPush.expects(:add).returns(true)
+      GitPush.expects(:commit).returns(true)
+      GitPush.expects(:pull).returns(true)
+      GitPush.expects(:reset).returns(false).once
+      
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if pull returns false" do
+      GitPush.expects(:add).returns(true)
+      GitPush.expects(:commit).returns(true)
+      GitPush.expects(:pull).returns(false)
+      
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if commit returns false" do
+      GitPush.expects(:add).returns(true)
+      GitPush.expects(:commit).returns(false)
+      
+      GitPush.expects(:pull).never
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
     should "exit if add returns false" do
+      GitPush.expects(:add).returns(false)
+      
       GitPush.expects(:commit).never
       GitPush.expects(:pull).never
       GitPush.expects(:reset).never
       GitPush.expects(:push).never
-      assert false, "Not finished"
+      GitPush.git_push
     end
     
     should "execute status, commit, pull, reset, push" do
-      GitPush.expects(:status).then.expects(:add).then.expects(:commit).then.expects(:pull).then.expects(:reset).then.expects(:push)
+      GitPush.expects(:add).returns(true) #.then.expects(:commit).returns(true).then.expects(:pull).returns(true).then.expects(:reset).returns(true).then.expects(:push).returns(true)
+      GitPush.expects(:commit).returns(true)
+      GitPush.expects(:pull).returns(true)
+      GitPush.expects(:reset).returns(true)
+      GitPush.expects(:push).returns(true)
       GitPush.git_push
-      assert false, "Not finished"
     end
   end
   

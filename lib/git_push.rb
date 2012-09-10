@@ -31,7 +31,11 @@
 class GitPush
   
   def self.git_push
-
+    add
+    commit
+    pull
+    reset
+    push
   end
   
   def self.status

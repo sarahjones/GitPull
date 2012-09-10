@@ -153,18 +153,35 @@ Merge the remote changes (e.g. 'git pull') before pushing again.  See the
   end
   
   context "git_push" do
+    should "exit if reset returns false" do
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if pull returns false" do
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
+    should "exit if commit returns false" do
+      GitPush.expects(:pull).never
+      GitPush.expects(:reset).never
+      GitPush.expects(:push).never
+      GitPush.git_push
+    end
+    
     should "exit if add returns false" do
       GitPush.expects(:commit).never
       GitPush.expects(:pull).never
       GitPush.expects(:reset).never
       GitPush.expects(:push).never
-      assert false, "Not finished"
+      GitPush.git_push
     end
     
     should "execute status, commit, pull, reset, push" do
       GitPush.expects(:status).then.expects(:add).then.expects(:commit).then.expects(:pull).then.expects(:reset).then.expects(:push)
       GitPush.git_push
-      assert false, "Not finished"
     end
   end
   

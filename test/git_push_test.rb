@@ -101,7 +101,7 @@ From github.com:GitPush/dir
 Automatic merge failed; fix conflicts and then commit the result."
   
   HASH = "f4bad36116f8b0557059c1cb2e581afac7694958"
-
+  
   LOG_WITHOUT_TEMPORARY_COMMIT =
     "commit #{HASH}
 Author: My Name <my_name@gmail.com>
@@ -123,6 +123,21 @@ Date:   Sat Sep 8 17:35:42 2012 -0700
     #{GitPush::COMMIT_MESSAGE}
 
 #{LOG_WITHOUT_TEMPORARY_COMMIT}"
+  
+  LOG_WITH_MULTIPLE_TEMPORARY_COMMITS =
+    "#{LOG}
+
+commit 3edfbfae71bac9b7ee466c89771bd85feae44444
+Author: My Name <my_name@gmail.com>
+Date:   Sat Sep 8 16:11:41 2012 -0700
+
+    #{GitPush::COMMIT_MESSAGE}
+
+commit cd76809cee49cd668f4492b465bcc75b4a344444
+Author: My Name <my_name@gmail.com>
+Date:   Sat Sep 8 14:25:05 2012 -0700
+
+    Tests framework setup. Added status."
   
   
   RESET = 
@@ -311,6 +326,12 @@ Merge the remote changes (e.g. 'git pull') before pushing again.  See the
   context "reset" do 
     should "find first hash after the temporary commit message" do
       GitPush.expects(:`).with("git log").returns(LOG).once
+      assert_equal HASH, GitPush.find_reset_hash
+    end
+    
+    should "find the first temporary commit message" do
+      puts LOG_WITH_MULTIPLE_TEMPORARY_COMMITS
+      GitPush.expects(:`).with("git log").returns(LOG_WITH_MULTIPLE_TEMPORARY_COMMITS).once
       assert_equal HASH, GitPush.find_reset_hash
     end
     

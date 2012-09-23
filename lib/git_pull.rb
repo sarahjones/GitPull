@@ -6,34 +6,15 @@
 
 
 
-#git commit -a -m "Temporary work"
-#git pull
-##get commit hash
-#git reset <hash>
-#git push
-
-#puts "git status"
-#puts `git status`
-#puts "Committing unstaged and untracked work to 'Temporary work'"
-#puts `git commit -a -m "Temporary work"`
-#puts "Pulling"
-#puts `git pull`
-##check for errors?
-#log = `git log`
-##output first 15 lines of git log - puts log
-#puts "Reseting to <name>.  Hash = <hash>"
-#puts `git reset <hash>`
-#puts "Pushing"
-#puts `git push`
 
 
 
-class GitPush
+class GitPull
   
-  COMMIT_MESSAGE = "GitPush Temporary Commit"
+  COMMIT_MESSAGE = "GitPull Temporary Commit"
   
-  def self.git_push
-    add && commit && pull && reset && push
+  def self.git_pull
+    add && commit && pull && reset
   end
   
   def self.status
@@ -59,13 +40,13 @@ class GitPush
   
   def self.commit
     puts "Executing: git commit -m \"#{COMMIT_MESSAGE}\""
-    commit_output = `git commit -m \"GitPush Temporary Commit\"`
+    commit_output = `git commit -m \"GitPull Temporary Commit\"`
     puts commit_output
     
     status_output = `git status`
     puts status_output
     
-    if commit_output['GitPush Temporary Commit'].nil?
+    if commit_output['GitPull Temporary Commit'].nil?
       puts "Error: Commit failed\nExiting..."
       false
     else 
@@ -82,10 +63,10 @@ class GitPush
     puts status_output
     
     if pull_output['Automatic merge failed; fix conflicts and then commit the result.']
-      puts "Error: Merge Conflicts\nYour 'GitPush Temporary Commit' is still committed.  Exiting..."
+      puts "Error: Merge Conflicts\nYour 'GitPull Temporary Commit' is still committed.  Exiting..."
       false
     elsif status_output['# Changes to be committed:']
-      puts "Error: Unknown Error.  There are untracked files in your status.\nYour 'GitPush Temporary Commit' is still committed.  Exiting..."
+      puts "Error: Unknown Error.  There are untracked files in your status.\nYour 'GitPull Temporary Commit' is still committed.  Exiting..."
       false
     else
       true
@@ -95,20 +76,13 @@ class GitPush
   def self.reset
     hash = find_reset_hash
     unless hash
-      puts "'GitPush Temporary Commit' not found.  Check git log or git reflog, maybe?"
+      puts "'GitPull Temporary Commit' not found.  Check git log or git reflog, maybe?"
       return false
     end
     
     puts "Executing: git reset #{hash}"
     reset_output = `git reset #{hash}`
     puts reset_output
-    true
-  end
-  
-  def self.push
-    puts "Executing: git push"
-    push_output = `git push`
-    puts "GitPush script complete.  Check the output of your push."
     true
   end
   
@@ -125,5 +99,5 @@ end
 
 
 if __FILE__==$0
-  GitPush.git_push
+  GitPull.git_pull
 end

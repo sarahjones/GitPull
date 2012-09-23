@@ -1,7 +1,7 @@
-GitPush
+GitPull
 =======
 
-A script that includes the committing any uncommitted files into a temporary commit, a pull, a reset to undo the temporary commit, and a push.
+A script that includes the committing any uncommitted files into a temporary commit, a pull, and a reset to undo the temporary commit.
 
 
 Known issues/feature requests:
